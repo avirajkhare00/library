@@ -19,3 +19,8 @@ or
 ```bash
   docker-compose down
 ```
+
+Once `docker-compose` is up.
+
+Frontend => `http://127.0.0.1:3000`
+Backend => `http://127.0.0.1:8000`
