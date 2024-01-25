@@ -6,7 +6,7 @@ class Shelf(models.Model):
   space_in_cm = models.IntegerField()
 
   def __repr__(self):
-    return self.id
+    return self.pk
 
   @classmethod
   def free_space(cls):
@@ -41,7 +41,7 @@ class Catalogue(models.Model):
   book = models.ForeignKey(Book, on_delete=models.CASCADE)
 
   def __repr__(self):
-    return str(shelf.id) + '-' + book.name
+    return self.pk
 
   @classmethod
   def total_books(cls, shelf_id):

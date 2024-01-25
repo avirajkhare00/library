@@ -202,3 +202,113 @@ class DeleteSingleBookTest(TestCase):
   def test_invalid_delete_shelf(self):
     response = client.delete(reverse('get_update_delete_book', kwargs={'pk': 15}))
     self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+
+class GetAllCataloguesTest(TestCase):
+
+  def setUp(self):
+    self.book_one = Book.objects.create(name='Gita', space_in_cm=4, price=50)
+    self.book_two = Book.objects.create(name='Hanuman Chalisa', space_in_cm=2, price=10)
+    self.shelf_one = Shelf.objects.create(space_in_cm=100)
+    self.catalogue_one = Catalogue.objects.create(shelf=self.shelf_one, book=self.book_one)
+    self.catalogue_two = Catalogue.objects.create(shelf=self.shelf_one, book=self.book_two)
+
+  def test_get_all_catalogues(self):
+    # get API response
+    response = client.get(reverse('get_post_catalogues'))
+    # get data from db
+    catalogues = Catalogue.objects.all()
+    serializer = CatalogueSerializer(catalogues, many=True)
+
+    self.assertEqual(response.data, serializer.data)
+    self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+
+class GetSingleCatalogueTest(TestCase):
+
+  def setUp(self):
+    self.book_one = Book.objects.create(name='Gita', space_in_cm=4, price=50)
+    self.book_two = Book.objects.create(name='Hanuman Chalisa', space_in_cm=2, price=10)
+    self.shelf_one = Shelf.objects.create(space_in_cm=100)
+    self.catalogue_one = Catalogue.objects.create(shelf=self.shelf_one, book=self.book_one)
+    self.catalogue_two = Catalogue.objects.create(shelf=self.shelf_one, book=self.book_two)
+
+  def test_get_valid_single_catalogue(self):
+    response = client.get(
+            reverse('get_update_delete_catalogue', kwargs={'pk': self.catalogue_one.pk}))
+    catalogue_one = Catalogue.objects.get(pk=self.catalogue_one.pk)
+    serializer = CatalogueSerializer(catalogue_one)
+    self.assertEqual(response.data, serializer.data)
+    self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+  def test_get_invalid_single_catalogue(self):
+    response = client.get(
+            reverse('get_update_delete_catalogue', kwargs={'pk': 15}))
+    self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+
+class CreateNewCatalogueTest(TestCase):
+  def setUp(self):
+    self.book_one = Book.objects.create(name='Gita', space_in_cm=4, price=50)
+    self.book_two = Book.objects.create(name='Hanuman Chalisa', space_in_cm=2, price=10)
+    self.shelf_one = Shelf.objects.create(space_in_cm=100)
+    self.valid_payload = {'book': self.book_one.pk, 'shelf': self.shelf_one.pk}
+    self.invalid_payload = {'space': 10}
+
+  def test_create_valid_catalogue(self):
+    response = client.post(
+      reverse('get_post_catalogues'),
+      data = json.dumps(self.valid_payload),
+      content_type='application/json'
+    )
+    self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+  def test_create_invalid_catalogue(self):
+    response = client.post(
+      reverse('get_post_catalogues'),
+      data = json.dumps(self.invalid_payload),
+      content_type='application/json'
+    )
+    self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+
+class UpdateSingleCatalogueTest(TestCase):
+  def setUp(self):
+    self.book_one = Book.objects.create(name='Gita', space_in_cm=4, price=50)
+    self.book_two = Book.objects.create(name='Hanuman Chalisa', space_in_cm=2, price=10)
+    self.shelf_one = Shelf.objects.create(space_in_cm=100)
+    self.catalogue_one = Catalogue.objects.create(book=self.book_one, shelf=self.shelf_one)
+    self.valid_payload = {'book': self.book_two.pk, 'shelf': self.shelf_one.pk}
+    self.invalid_payload = {'space': 15}
+
+  def test_update_valid_catalogue(self):
+    response = client.put(
+      reverse('get_update_delete_catalogue', kwargs = {'pk': self.catalogue_one.pk}),
+      data = json.dumps(self.valid_payload),
+      content_type='application/json'
+    )
+    self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+
+  def test_update_invalid_catalogue(self):
+    response = client.put(
+      reverse('get_update_delete_catalogue', kwargs = {'pk': self.catalogue_one.pk}),
+      data = json.dumps(self.invalid_payload),
+      content_type='application/json'
+    )
+    self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+
+class DeleteSingleCatalogueTest(TestCase):
+  def setUp(self):
+    self.book_one = Book.objects.create(name='Gita', space_in_cm=4, price=50)
+    self.book_two = Book.objects.create(name='Hanuman Chalisa', space_in_cm=2, price=10)
+    self.shelf_one = Shelf.objects.create(space_in_cm=100)
+    self.catalogue_one = Catalogue.objects.create(book=self.book_one, shelf=self.shelf_one)
+
+  def test_valid_delete_catalogue(self):
+    response = client.delete(reverse('get_update_delete_catalogue', kwargs={'pk': self.catalogue_one.pk}))
+    self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+
+  def test_invalid_delete_catalogue(self):
+    response = client.delete(reverse('get_update_delete_catalogue', kwargs={'pk': 15}))
+    self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)

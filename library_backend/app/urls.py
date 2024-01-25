@@ -22,5 +22,15 @@ urlpatterns = [
         r'^api/v1/books/$',
         views.get_post_books,
         name='get_post_books'
+    ),
+    re_path(
+        r'^api/v1/catalogue/(?P<pk>[0-9]+)$',
+        views.get_update_delete_catalogue,
+        name='get_update_delete_catalogue'
+    ),
+    re_path(
+        r'^api/v1/catalogues/$',
+        views.get_post_catalogues,
+        name='get_post_catalogues'
     )
 ]
