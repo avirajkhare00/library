@@ -32,5 +32,10 @@ urlpatterns = [
         r'^api/v1/catalogues/$',
         views.get_post_catalogues,
         name='get_post_catalogues'
+    ),
+    re_path(
+        r'^api/v1/analytics/$',
+        views.get_analytics,
+        name='get_analytics'
     )
 ]
