@@ -45,3 +45,46 @@ def get_post_shelves(request):
       serializer.save()
       return Response(serializer.data, status=status.HTTP_201_CREATED)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['GET', 'PUT', 'DELETE'])
+def get_update_delete_book(request, pk):
+  try:
+    book = Book.objects.get(pk=pk)
+  except Book.DoesNotExist:
+    return Response(status=status.HTTP_404_NOT_FOUND)
+
+  # get details of a single book
+  if request.method == 'GET':
+    serializer = BookSerializer(book)
+    return Response(serializer.data)
+  # delete a single book
+  elif request.method == 'DELETE':
+    book.delete()
+    return Response(status=status.HTTP_204_NO_CONTENT)
+  # update details of a single book
+  elif request.method == 'PUT':
+    serializer = BookSerializer(book, data=request.data)
+    if serializer.is_valid():
+      serializer.save()
+      return Response(serializer.data, status=status.HTTP_204_NO_CONTENT)
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['GET', 'POST'])
+def get_post_books(request):
+  # get all books
+  if request.method == 'GET':
+    books = Book.objects.all()
+    serializer = BookSerializer(books, many=True)
+    return Response(serializer.data)
+  elif request.method == 'POST':
+    # insert a new record for a book
+    data = {
+      'name': request.data.get('name'),
+      'space_in_cm': request.data.get('space_in_cm'),
+      'price': request.data.get('price')
+    }
+    serializer = BookSerializer(data=data)
+    if serializer.is_valid():
+      serializer.save()
+      return Response(serializer.data, status=status.HTTP_201_CREATED)
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
