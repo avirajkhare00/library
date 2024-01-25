@@ -1,5 +1,7 @@
 # library
 
+![project output](../readme_assets/screenshot.png)
+
 ## Installation and running
 
 Ensure docker and docker-compose is installed on your machine.
