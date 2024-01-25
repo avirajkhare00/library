@@ -8,6 +8,17 @@ class Shelf(models.Model):
   def __repr__(self):
     return self.id
 
+  @classmethod
+  def free_space(cls):
+    total_space_in_cm = 0
+    total_books_space_in_cm = 0
+    remaining_space = 0
+    for shelf in Shelf.objects.all():
+      total_space_in_cm += shelf.space_in_cm
+    for book in Book.objects.all():
+      total_books_space_in_cm += book.space_in_cm
+    return total_space_in_cm - total_books_space_in_cm
+
 
 class Book(models.Model):
   name = models.CharField(max_length=200)
@@ -16,6 +27,13 @@ class Book(models.Model):
 
   def __repr__(self):
     return self.name
+
+  @classmethod
+  def total_book_price(cls):
+    total_price = 0
+    for book in Book.objects.all():
+      total_price += book.price
+    return total_price
 
 
 class Catalogue(models.Model):

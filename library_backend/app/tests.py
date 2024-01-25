@@ -10,6 +10,14 @@ class ShelfTest(TestCase):
 
     self.assertEqual(shelf_one.space_in_cm, 10)
 
+  def test_all_shelf_free_space(self):
+    shelf_one = Shelf.objects.create(space_in_cm=10)
+
+    book_one = Book.objects.create(name="Jungle Book", space_in_cm="2", price=100)
+    book_two = Book.objects.create(name="Jungle Book Returns", space_in_cm="3", price=150)
+
+    self.assertEqual(Shelf.free_space(), 5)
+
 
 class BookTest(TestCase):
 
@@ -22,6 +30,12 @@ class BookTest(TestCase):
 
     self.assertEqual(book_one.price, 100)
     self.assertEqual(book_two.price, 150)
+
+  def test_total_books_price(self):
+    book_one = Book.objects.create(name="Jungle Book", space_in_cm="2", price=100)
+    book_two = Book.objects.create(name="Jungle Book Returns", space_in_cm="3", price=150)
+
+    self.assertEqual(Book.total_book_price(), 250)
 
 
 class CatalogueTest(TestCase):
