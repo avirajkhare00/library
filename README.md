@@ -1,6 +1,6 @@
 # library
 
-![project output](../readme_assets/screenshot.png)
+![project output](https://raw.githubusercontent.com/avirajkhare00/library/main/readme_assets/screenshot.png)
 
 ## Installation and running
 
